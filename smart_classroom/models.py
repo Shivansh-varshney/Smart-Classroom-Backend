@@ -65,7 +65,7 @@ class User(AbstractUser):
 
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    phone = models.CharField(max_length=12)
+    phone = models.CharField(max_length=15)
     email = models.EmailField(unique=True)
     role = models.CharField(choices=roles, max_length=15, default='admin')
 
