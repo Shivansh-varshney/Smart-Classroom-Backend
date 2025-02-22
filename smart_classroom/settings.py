@@ -28,6 +28,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # installed modules
+    'rest_framework',
+
     # custom apps
     'smart_classroom'
 ]
@@ -73,7 +76,7 @@ DATABASES = {
         'USER': config('SQL_USER'),
         'PASSWORD': config('SQL_PASSWORD'),
         'HOST': 'localhost',
-        'PORT': ''
+        'PORT': '5432'
     }
 }
 

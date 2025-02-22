@@ -1,3 +1,4 @@
+import json
 import hashlib
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -6,11 +7,12 @@ from smart_classroom.models import User
 @csrf_exempt
 def view(request):
         if request.method == 'POST':
-            first_name = request.POST.get('first_name')
-            last_name = request.POST.get('last_name')
-            phone = request.POST.get('phone')
-            email = request.POST.get('email')
-            password = request.POST.get('password')
+            data = json.loads(request.body.decode('utf-8'))
+            first_name = data.get('first_name')
+            last_name = data.get('last_name')
+            phone = data.get('phone')
+            email = data.get('email')
+            password = data.get('password')
             role = 'admin'
 
             if not first_name or not last_name or not phone or not email or not password:

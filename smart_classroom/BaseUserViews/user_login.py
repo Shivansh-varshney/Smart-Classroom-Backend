@@ -1,3 +1,4 @@
+import json
 import hashlib
 from django.http import JsonResponse
 from smart_classroom.models import User
@@ -8,8 +9,10 @@ from django.views.decorators.csrf import csrf_exempt
 def view(request):
 
     if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        
+        data = json.loads(request.body.decode('utf-8'))
+        email = data.get('email')
+        password = data.get('password')
 
         if not email or not password:
             return JsonResponse({
@@ -43,13 +46,18 @@ def view(request):
                 response['AUTHORIZATION'] = token
 
                 return response
+            
+            return JsonResponse({
+                'status': 'error',
+                'message': f"Wrong password"
+            }, status=404)
         
         except User.DoesNotExist:
             return JsonResponse({
                 'status': 'error',
                 'message': 'Email not found'
-            }, status=404)
-
+            }, status=400)
+        
     return JsonResponse({
             'status': 'error',
             'message': 'Invalid request method'

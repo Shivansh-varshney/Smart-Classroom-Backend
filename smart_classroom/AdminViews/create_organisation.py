@@ -1,3 +1,4 @@
+import json
 from . import verify_admin
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -12,9 +13,10 @@ def view(request):
         if verify.status_code != 200:
             return verify
 
-        orgname = request.POST.get('name')
-        orgtype = request.POST.get('type')
-        orgboard = request.POST.get('board')
+        data = json.loads(request.body.decode('utf-8'))
+        orgname = data.get('name')
+        orgtype = data.get('type')
+        orgboard = data.get('board')
 
         user_id = request.META.get('HTTP_USER_ID')
         userObj = User.objects.get(id=user_id)
@@ -47,7 +49,7 @@ def view(request):
                     'board': orgObj.board,
                     'departments': None
                 }
-            }, status=200)
+            }, status=201)
 
     return JsonResponse({
         'status': 'error',

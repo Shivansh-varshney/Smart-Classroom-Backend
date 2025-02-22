@@ -13,4 +13,4 @@ def view(request):
     return JsonResponse({
         'status': 'error',
         'message': 'Authentication header missing'
-    })
+    }, status=400)
