@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator
 from django.contrib.auth.models import AbstractUser
 
 organisationType = {
@@ -102,7 +103,7 @@ class Degree(models.Model):
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     title = models.CharField(max_length=256)
     branch = models.CharField(max_length=256)
-    semesters = models.IntegerField()
+    semesters = models.IntegerField(validators=[MinValueValidator(1)])
 
     def __str__(self):
         return f"{self.title} {self.branch}, {self.department.organisation}"

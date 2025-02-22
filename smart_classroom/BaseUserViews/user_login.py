@@ -50,7 +50,7 @@ def view(request):
             return JsonResponse({
                 'status': 'error',
                 'message': f"Wrong password"
-            }, status=404)
+            }, status=400)
         
         except User.DoesNotExist:
             return JsonResponse({

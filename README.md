@@ -59,3 +59,15 @@ print(get_random_secret_key())
 ```
 SECRET_KEY = ''
 ```
+
+### run tests and run server
+
+> tests
+```
+python manage.py test
+```
+
+> server
+```
+python manage.py runserver
+```
