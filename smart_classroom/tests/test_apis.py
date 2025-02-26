@@ -60,7 +60,7 @@ class OrganisationAPITestCase(TestCase):
             'email': 'newadmin@example.com',
             'password': str(hashlib.sha256('securepass'.encode()).hexdigest())
         }, content_type='application/json')
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
     
     def test_02_admin_signup_using_existing_email(self):
         """Test to see that same email doesn't create two admin accounts"""
@@ -75,7 +75,7 @@ class OrganisationAPITestCase(TestCase):
         }, content_type='application/json'
         )
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertIn('Email already in use', response.content.decode())
     
     def test_03_admin_signup_with_missing_details(self):
@@ -90,7 +90,7 @@ class OrganisationAPITestCase(TestCase):
         }, content_type='application/json'
         )
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertIn('One or more details missing', response.content.decode())
 
     def test_04_admin_login(self):
@@ -109,7 +109,7 @@ class OrganisationAPITestCase(TestCase):
         data = {
             'email': 'testuser@gmail.com'
         }, content_type='application/json')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertIn('Credentials incomplete', response.content.decode())
 
     def test_06_admin_login_with_wrong_email(self):
@@ -119,7 +119,7 @@ class OrganisationAPITestCase(TestCase):
             'email': 'wrongtestuser@gmail.com',
             'password': 'wrongpassword'
         }, content_type='application/json')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertIn('Email not found', response.content.decode())
 
     def test_07_admin_login_with_wrong_password(self):
@@ -129,7 +129,7 @@ class OrganisationAPITestCase(TestCase):
             'email': 'testuser@gmail.com',
             'password': 'wrongpassword'
         }, content_type='application/json')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertIn('Wrong password', response.content.decode())
 
     def test_08_create_new_organisation_with_incomplete_details(self):
@@ -139,7 +139,7 @@ class OrganisationAPITestCase(TestCase):
             'name': 'New Org',
         },
         content_type='application/json')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
         self.assertIn('Name and type are required', response.content.decode())
 
     def test_09_create_first_organisation_for_an_admin(self):
@@ -177,13 +177,13 @@ class OrganisationAPITestCase(TestCase):
             'board': 'CBSE: Central Board of Secondary Education'
         },
         content_type='application/json')
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
         self.assertIn('User already has an organisation.', response.content.decode())
 
     def test_11_get_organisation(self):
         """Test fetching organisation details."""
         
-        response = self.client.get('/api/admin/organisation/'
+        response = self.client.post('/api/admin/organisation/'
         ,
         content_type='application/json')
         self.assertEqual(response.status_code, 200)

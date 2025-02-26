@@ -19,14 +19,14 @@ def view(request):
                 return JsonResponse({
                     'status': 'error',
                     'message': 'One or more details missing'
-                }, status = 400)
+                }, status=403)
 
             try:
                 userObj = User.objects.get(email=email)
                 return JsonResponse({
                     'status': 'error',
                     'message': 'Email already in use'
-                }, status=400)     
+                }, status=403)     
 
             except User.DoesNotExist:
 
@@ -42,7 +42,7 @@ def view(request):
                 return JsonResponse({
                     'status': 'success',
                     'message': 'Admin registered'
-                }, status=200)
+                }, status=201)
 
         return JsonResponse({
                 'status': 'error',

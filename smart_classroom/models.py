@@ -2,73 +2,14 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import AbstractUser
 
-organisationType = {
-    "Private School": "Private School",
-    "Private College": "Private College",
-    "Government School": "Government School",
-    "Government College": "Government College",
-    "Semi-government School": "Semi-government School",
-    "Semi-government College": "Semi-government College",
-    "Central Government School": "Central Government School",
-    "Central Government College": "Central Government College",
-    "International School": "International School",
-    "Autonomous College": "Autonomous College",
-    "Deemed University": "Deemed University",
-    "State University": "State University",
-    "Central University": "Central University",
-    "Private University": "Private University",
-    "Open University": "Open University",
-    "Distance Learning Institute": "Distance Learning Institute",
-    "Vocational Training Institute": "Vocational Training Institute",
-    "Polytechnic College": "Polytechnic College",
-    "Engineering College": "Engineering College",
-    "Medical College": "Medical College",
-    "Law College": "Law College",
-    "Management Institute": "Management Institute",
-    "Research Institute": "Research Institute"
-}
-
-boards = {
-    "CBSE: Central Board of Secondary Education": "CBSE: Central Board of Secondary Education",
-    "ICSE: Indian Certificate of Secondary Education": "ICSE: Indian Certificate of Secondary Education",
-    "NIOS: National Institute of Open Schooling": "NIOS: National Institute of Open Schooling",
-    "CISCE: Council for the Indian School Certificate Examinations": "CISCE: Council for the Indian School Certificate Examinations",
-    "IB: International Baccalaureate": "IB: International Baccalaureate",
-    "IGCSE: International General Certificate of Secondary Education": "IGCSE: International General Certificate of Secondary Education",
-    "Cambridge: Cambridge Assessment International Education": "Cambridge: Cambridge Assessment International Education",
-    "Madarsa: Madarsa Education Board": "Madarsa: Madarsa Education Board",
-    "WBBSE: West Bengal Board of Secondary Education": "WBBSE: West Bengal Board of Secondary Education",
-    "MSBSHSE: Maharashtra State Board of Secondary and Higher Secondary Education": "MSBSHSE: Maharashtra State Board of Secondary and Higher Secondary Education",
-    "UPMSP: Uttar Pradesh Madhyamik Shiksha Parishad": "UPMSP: Uttar Pradesh Madhyamik Shiksha Parishad",
-    "RBSE: Rajasthan Board of Secondary Education": "RBSE: Rajasthan Board of Secondary Education",
-    "PSEB: Punjab School Education Board": "PSEB: Punjab School Education Board",
-    "BSEB: Bihar School Examination Board": "BSEB: Bihar School Examination Board",
-    "GSEB: Gujarat Secondary and Higher Secondary Education Board": "GSEB: Gujarat Secondary and Higher Secondary Education Board",
-    "KSEEB: Karnataka Secondary Education Examination Board": "KSEEB: Karnataka Secondary Education Examination Board",
-    "TNBSE: Tamil Nadu Board of Secondary Education": "TNBSE: Tamil Nadu Board of Secondary Education",
-    "APBSE: Andhra Pradesh Board of Secondary Education": "APBSE: Andhra Pradesh Board of Secondary Education",
-    "HBSE: Haryana Board of School Education": "HBSE: Haryana Board of School Education",
-    "MPBSE: Madhya Pradesh Board of Secondary Education": "MPBSE: Madhya Pradesh Board of Secondary Education",
-    "CGBSE: Chhattisgarh Board of Secondary Education": "CGBSE: Chhattisgarh Board of Secondary Education",
-    "JKBOSE: Jammu and Kashmir State Board of School Education": "JKBOSE: Jammu and Kashmir State Board of School Education",
-    "MBOSE: Meghalaya Board of School Education": "MBOSE: Meghalaya Board of School Education",
-    "NBSE: Nagaland Board of School Education": "NBSE: Nagaland Board of School Education",
-    "BSE Odisha: Board of Secondary Education, Odisha": "BSE Odisha: Board of Secondary Education, Odisha"
-}
-
-roles = {
-    'admin': 'admin',
-    'student': 'student',
-    'teacher': 'teacher'
-}
-
 class User(AbstractUser):
 
+    username = models.CharField(max_length=256, null=True, blank=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     phone = models.CharField(max_length=15)
     email = models.EmailField(unique=True)
-    role = models.CharField(choices=roles, max_length=15, default='admin')
+    role = models.CharField(max_length=15, default='admin')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -80,8 +21,8 @@ class Organisation(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=256)
-    orgType = models.CharField(choices=organisationType, max_length=256)
-    board = models.CharField(choices=boards, max_length=256, null=True, blank=True)
+    orgType = models.CharField(max_length=256)
+    board = models.CharField(max_length=256, null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -135,7 +76,12 @@ class Student(models.Model):
     image = models.ImageField(upload_to='media/students/')
     semester = models.IntegerField()
     roll_number = models.IntegerField()
-    parent_phone = models.CharField(max_length=12)
+    category = models.CharField(max_length=256)
+    father_name = models.CharField(max_length=256)
+    mother_name = models.CharField(max_length=256)
+    father_occupation = models.CharField(max_length=256)
+    mother_occupation = models.CharField(max_length=256)
+    parent_phone = models.CharField(max_length=15)
     parent_email = models.EmailField()
 
     def __str__(self):

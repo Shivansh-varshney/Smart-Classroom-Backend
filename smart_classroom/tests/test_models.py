@@ -41,12 +41,6 @@ class OrganisationModelTestCase(TestCase):
     def test_02_organisation_str(self):
         """Test organisation string representation."""
         self.assertEqual(str(self.org), 'Test Org')
-    
-    def test_03_invalid_orgType(self):
-        """Test that an invalid organisation type raises an error."""
-        with self.assertRaises(ValidationError):
-            org = Organisation(user=self.user, name='Invalid Org', orgType='InvalidType')
-            org.full_clean()
 
 class DepartmentModelTestCase(TestCase):
     

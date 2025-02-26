@@ -7,7 +7,7 @@ def generate_token(user):
 
     payload = {
         'user_id': user.id,
-        'expire': int((datetime.datetime.utcnow() + datetime.timedelta(seconds=settings.JWT_EXPIRATION_SECONDS)).timestamp()),
+        'exp': int((datetime.datetime.utcnow() + datetime.timedelta(seconds=settings.JWT_EXPIRATION_SECONDS)).timestamp()),
         'iat': int(datetime.datetime.utcnow().timestamp())
     }
 
@@ -35,4 +35,3 @@ def verify_token(token):
             'status': 'error',
             'message': 'Invalid Token'
         }, status=400)
-    

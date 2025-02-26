@@ -18,7 +18,7 @@ def view(request):
             return JsonResponse({
                 'status': 'error',
                 'message': 'Credentials incomplete'
-            }, status=400)
+            }, status=403)
         
         try:
             userObj = User.objects.get(email=email)
@@ -50,13 +50,13 @@ def view(request):
             return JsonResponse({
                 'status': 'error',
                 'message': f"Wrong password"
-            }, status=400)
+            }, status=403)
         
         except User.DoesNotExist:
             return JsonResponse({
                 'status': 'error',
                 'message': 'Email not found'
-            }, status=400)
+            }, status=404)
         
     return JsonResponse({
             'status': 'error',

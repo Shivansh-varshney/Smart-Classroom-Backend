@@ -27,14 +27,15 @@ def view(request):
             return JsonResponse({
                 'status': 'error',
                 'message': 'User already has an organisation.'
-            }, status=401)
+            }, status=403)
 
         except Organisation.DoesNotExist:
+            
             if not orgname or not orgtype:
                 return JsonResponse({
                     'status': 'error',
                     'message': 'Name and type are required'
-                }, status=400)
+                }, status=403)
             
             orgObj = Organisation.objects.create(user=userObj, name=orgname, orgType=orgtype, board=orgboard)
             orgObj.save()
