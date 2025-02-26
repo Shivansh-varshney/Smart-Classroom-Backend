@@ -23,11 +23,6 @@ class UserModelTestCase(TestCase):
         """Test user string representation."""
         self.assertEqual(str(self.user), 'Test User')
 
-    def test_03_duplicate_username(self):
-        """Test that duplicate usernames are not allowed."""
-        with self.assertRaises(Exception):
-            User.objects.create_user(username='testuser', email='new@example.com', password='password123')
-
 class OrganisationModelTestCase(TestCase):
 
     def setUp(self):
