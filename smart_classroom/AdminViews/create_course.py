@@ -54,4 +54,4 @@ def view(request):
     return JsonResponse({
         'status': 'error',
         'message': 'Invalid request method'
-    })
+    }, status=405)

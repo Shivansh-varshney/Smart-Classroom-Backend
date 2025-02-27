@@ -60,11 +60,11 @@ def view(request):
                 }
             }, status=201)
 
-        except Exception as error:
+        except Department.DoesNotExist:
             return JsonResponse({
                 'status': 'error',
-                'message': str(error)
-            }, status=401)
+                'message': 'Department not found'
+            }, status=404)
 
     return JsonResponse({
         'status': 'error',

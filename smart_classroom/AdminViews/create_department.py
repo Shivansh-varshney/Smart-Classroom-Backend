@@ -22,7 +22,7 @@ def view(request):
             if not organisation_id or not name:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'Organisation ID and name missing'
+                    'message': 'Organisation ID or name missing'
                 }, status=403)
 
             organisationObj = Organisation.objects.get(id=organisation_id)

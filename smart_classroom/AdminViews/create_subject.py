@@ -28,14 +28,15 @@ def view(request):
 
             # queries
             courseObj = Course.objects.get(id=course_id)
-            teacherObj = Teacher.objects.get(id=teacher_id)
+            teacherObj = Teacher.objects.get(id=teacher_id) if teacher_id else None
 
             subject = Subject.objects.create(
                 name=name,
                 semester=semester
             )
             subject.course.set([courseObj])
-            subject.teacher.set([teacherObj])
+            if teacherObj is not None:
+                subject.teacher.set([teacherObj])
             subject.save()
 
             return JsonResponse({
@@ -51,7 +52,7 @@ def view(request):
             return JsonResponse({
                 'status': 'error',
                 'message': 'Course not found'
-            }, status404)
+            }, status=404)
 
         except Teacher.DoesNotExist:
             return JsonResponse({
