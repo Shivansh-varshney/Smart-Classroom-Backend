@@ -71,7 +71,7 @@ class Subject(models.Model):
 class Student(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    degree = models.OneToOneField(Degree, on_delete=models.CASCADE)
+    degree = models.ForeignKey(Degree, on_delete=models.CASCADE)
     subjects = models.ManyToManyField('Subject', blank=True)
     image = models.ImageField(upload_to='media/students/')
     semester = models.IntegerField()
@@ -106,7 +106,7 @@ class Result(models.Model):
     gained_credit = models.IntegerField()
 
     def __str__(self):
-        return f"Roll Number: {self.student.roll_number}, Semester: {self.semester}, Subject: {self.subject}"
+        return f"Roll Number: {self.student.roll_number}, Semester: {self.semester}, Subject: {self.subject.name}"
    
 class UserAddress(models.Model):
     user = models.ForeignKey(

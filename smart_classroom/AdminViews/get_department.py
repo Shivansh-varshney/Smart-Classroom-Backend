@@ -75,19 +75,13 @@ def view(request):
                         for teacher in teachers
                     ]
                 }
-            })
+            }, status=200)
 
         except Department.DoesNotExist:
             return JsonResponse({
                 'status': 'error',
-                'message': 'Department ID not found'
+                'message': 'Department not found'
             }, status=404)
-        
-        except Exception as error:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Something went wrong'
-            }, status=401)
 
     return JsonResponse({
         'status': 'error',

@@ -1,50 +1,10 @@
 import json
 import hashlib
 from smart_classroom.models import * 
-from django.urls import reverse
-from django.test import TestCase, Client
+from .BaseTestData import APITestData
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-class AdminAPITestCase(TestCase):
-
-    @classmethod
-    def setUpTestData(cls):
-
-        # user for admin role
-        cls.user = User.objects.create(
-        first_name='first_name', 
-        last_name='last_name', 
-        phone='phone', 
-        email='testuser@gmail.com', 
-        role='admin', 
-        password=hashlib.sha256('password'.encode()).hexdigest())
-
-        # create organisation for the user
-        cls.organisation = Organisation.objects.create(
-            user=cls.user,
-            name='First Organisation',
-            orgType='Private School'
-        )
-
-        # create department for the organisation
-        cls.department = Department.objects.create(
-            organisation=cls.organisation,
-            name="Computer Science"
-        )
-
-    def setUp(self):
-
-        self.client = Client()
-        response = self.client.post('/api/user/login/', 
-        data = {
-            'email': 'testuser@gmail.com',
-            'password': 'password'
-        }, content_type='application/json')
-
-        self.token = f"Bearer {response.headers.get('AUTHORIZATION')}"
-        if self.token:
-            self.client.defaults['HTTP_AUTHORIZATION'] = self.token
-            self.client.defaults['HTTP_USER_ID'] = str(self.user.id)
+class AdminAPITestCase(APITestData):
 
     def test_01_create_teacher(self):
         """Test create a teacher"""
@@ -125,3 +85,36 @@ class AdminAPITestCase(TestCase):
 
         self.assertEqual(response.status_code, 405)
         self.assertIn("Invalid request method", response.content.decode())
+
+    def test_05_create_teacher_with_invalid_admin(self):
+        """Test create a teacher with invalid admin"""
+
+        response = self.client.post('/api/user/login/', 
+        data = {
+            'email': 'testuser3@gmail.com',
+            'password': 'password'
+        }, content_type='application/json')
+
+        self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"
+        if self.token:
+            self.client.defaults['HTTP_AUTHORIZATION'] = self.token
+            self.client.defaults['HTTP_USER_ID'] = str(self.user3.id)
+
+        with open("/home/shivansh/Desktop/all_codes/smart_classroom/smart_classroom_backend/media/teachers/Untitled.jpeg", "rb") as img_file:
+            uploaded_image = SimpleUploadedFile(
+                "image.jpg", img_file.read() , content_type='image/jpg'
+            )
+
+        response = self.client.post("/api/admin/teacher/create/", {
+            "department_id": self.department.id,
+            "first_name": "Some Name",
+            "last_name": "for a teacher",
+            "phone": "here phone",
+            "email": "teacher@school.com",
+            "image": uploaded_image,
+            "salary": 120000,
+            "password": "securepassword",
+        }, format='multipart')
+
+        self.assertEqual(response.status_code, 401)
+        self.assertIn("unauthorized access", response.content.decode())

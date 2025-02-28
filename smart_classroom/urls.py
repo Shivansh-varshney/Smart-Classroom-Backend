@@ -10,10 +10,13 @@ from smart_classroom.AdminViews import (admin_signup,
                                         )
 from smart_classroom.BaseUserViews import (user_login)
 
+from utils.helpers.auths import refresh_token
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/admin/signup/', admin_signup.view, name='admin_signup'),
     path('api/user/login/', user_login.view, name='admin_login'),
+    path('api/user/refresh_token/', refresh_token, name='refresh_token'),
     path('api/admin/organisation/', get_organisation.view, name='get_admin_organisation'),
     path('api/admin/organisation/create/', create_organisation.view, name='create_admin_organisation'),
     path('api/admin/department/', get_department.view, name='get_organisation_department'),

@@ -17,6 +17,11 @@ def view(request):
             return JsonResponse({
                 'status': 'success'
             }, status=200)
+        
+        return JsonResponse({
+            'status': 'error',
+            'message': 'unauthorized access'
+        }, status=401)
     
     except User.DoesNotExist:
         return JsonResponse({

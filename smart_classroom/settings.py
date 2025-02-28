@@ -10,6 +10,7 @@ SECRET_KEY = config('SECRET_KEY')
 
 JWT_ALGORITHM = config('JWT_ALGORITHM')
 JWT_EXPIRATION_SECONDS = 3600
+JWT_REFRESH_EXPIRATION_DAYS = 7
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

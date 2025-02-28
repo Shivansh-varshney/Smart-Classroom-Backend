@@ -28,7 +28,7 @@ def view(request):
 
             if user_email == email and user_password == hashlib.sha256(password.encode()).hexdigest():
 
-                token = generate_token(userObj)
+                tokens = generate_token(userObj)
 
                 response = JsonResponse({
                     'status': 'success',
@@ -43,7 +43,8 @@ def view(request):
                 }, status=200)
 
                 response['USER-ID'] = userObj.id
-                response['AUTHORIZATION'] = token
+                response['ACCESS-TOKEN'] = tokens['access_token']
+                response['REFRESH-TOKEN'] = tokens['refresh_token']
 
                 return response
             
