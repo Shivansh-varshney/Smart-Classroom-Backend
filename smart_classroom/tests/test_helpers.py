@@ -4,7 +4,7 @@ from smart_classroom.models import *
 from django.test import TestCase, Client
 from utils.helpers.auths import verify_token
 
-class APITestData(TestCase):
+class HelperFunctionsTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
@@ -64,7 +64,7 @@ class APITestData(TestCase):
         self.assertEqual(response.status_code, 401)
         self.assertIn("Invalid Token", response.content.decode())
 
-    def test_05_verify_session_withou_headers(self):
+    def test_05_verify_session_without_headers(self):
 
         self.client.defaults['HTTP_AUTHORIZATION'] = "invalid"
         response = self.client.post('/api/admin/organisation/'

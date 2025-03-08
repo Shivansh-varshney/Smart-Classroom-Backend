@@ -82,6 +82,12 @@ def view(request):
                 'status': 'error',
                 'message': 'Department not found'
             }, status=404)
+        
+        except Exception:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Something went wrong'
+            }, status=400)
 
     return JsonResponse({
         'status': 'error',

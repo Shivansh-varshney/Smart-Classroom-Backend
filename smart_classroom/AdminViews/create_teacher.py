@@ -1,9 +1,10 @@
 import json
 import hashlib
 from . import verify_admin
+from django.db import IntegrityError
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from smart_classroom.models import User, Department, Teacher
+from smart_classroom.models import User, Organisation, Department, Teacher
 
 @csrf_exempt
 def view(request):
@@ -31,9 +32,11 @@ def view(request):
                 }, status=403)
 
             # queries
+            adminObj = User.objects.get(id=request.META.get('HTTP_USER_ID'))
             departmentObj = Department.objects.get(id=department_id)
 
             userObj = User.objects.create(
+                organisation=adminObj.organisation,
                 first_name=first_name,
                 last_name=last_name,
                 phone=phone,
@@ -53,7 +56,7 @@ def view(request):
 
             return JsonResponse({
                 'status': 'success',
-                'message': 'Teaher created successfully',
+                'message': 'Teacher created successfully',
                 'teacher': {
                     'user_id': userObj.id,
                     'teacher_id': teacherObj.id
@@ -65,6 +68,12 @@ def view(request):
                 'status': 'error',
                 'message': 'Department not found'
             }, status=404)
+
+        except IntegrityError:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Teacher already exists'
+            }, status=401)
 
     return JsonResponse({
         'status': 'error',

@@ -43,12 +43,7 @@ def view(request):
             return JsonResponse({
                 'status': 'success',
                 'message': 'Degree created',
-                'degree': {
-                    'id': degreeObj.id,
-                    'title': degreeObj.title,
-                    'branch': degreeObj.branch,
-                    'semesters': degreeObj.semesters
-                }
+                'degree_id': degreeObj.id
             }, status=201)
 
         except Department.DoesNotExist:
@@ -56,6 +51,12 @@ def view(request):
                 'status': 'error',
                 'message': 'Department does not exist'
             }, status=404)
+        
+        except Exception:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Something went wrong'
+            }, status=400)
 
     return JsonResponse({
         'status': 'error',

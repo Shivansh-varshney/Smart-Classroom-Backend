@@ -2,9 +2,19 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import AbstractUser
 
+class Organisation(models.Model):
+
+    name = models.CharField(max_length=256)
+    orgType = models.CharField(max_length=256)
+    board = models.CharField(max_length=256, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
 class User(AbstractUser):
 
     username = models.CharField(max_length=256, null=True, blank=True)
+    organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, null=True, blank=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     phone = models.CharField(max_length=15)
@@ -16,16 +26,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}" if self.first_name else self.email
-
-class Organisation(models.Model):
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=256)
-    orgType = models.CharField(max_length=256)
-    board = models.CharField(max_length=256, null=True, blank=True)
-
-    def __str__(self):
-        return self.name
 
 class Department(models.Model):
 

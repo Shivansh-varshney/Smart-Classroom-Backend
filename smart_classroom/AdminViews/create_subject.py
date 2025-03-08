@@ -2,7 +2,7 @@ import json
 from . import verify_admin
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from smart_classroom.models import Course, Subject, Teacher
+from smart_classroom.models import Department, Course, Subject, Teacher
 
 @csrf_exempt
 def view(request):
@@ -15,6 +15,7 @@ def view(request):
                 return verify
 
             data = json.loads(request.body.decode('utf-8'))
+            department_id = data.get('department_id')
             course_id = data.get('course_id')
             teacher_id = data.get('teacher_id')
             name = data.get('name')
@@ -28,6 +29,7 @@ def view(request):
 
             # queries
             courseObj = Course.objects.get(id=course_id)
+            departmentObj = Department.objects.get(id=department_id)
             teacherObj = Teacher.objects.get(id=teacher_id) if teacher_id else None
 
             subject = Subject.objects.create(
@@ -38,6 +40,7 @@ def view(request):
             if teacherObj is not None:
                 subject.teacher.set([teacherObj])
             subject.save()
+            departmentObj.subjects.set([subject])
 
             return JsonResponse({
                 'status': 'success',
@@ -59,6 +62,12 @@ def view(request):
                 'status': 'error',
                 'message': 'Teacher not found'
             }, status=404)
+        
+        except Exception:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Something went wrong'
+            }, status=400)
 
     return JsonResponse({
         'status': 'error',

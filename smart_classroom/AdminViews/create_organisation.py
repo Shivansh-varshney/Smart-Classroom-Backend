@@ -13,15 +13,15 @@ def view(request):
         if verify.status_code != 200:
             return verify
 
-        data = json.loads(request.body.decode('utf-8'))
-        orgname = data.get('name')
-        orgtype = data.get('type')
-        orgboard = data.get('board')
-
-        user_id = request.META.get('HTTP_USER_ID')
-        userObj = User.objects.get(id=user_id)
-
         try:
+            data = json.loads(request.body.decode('utf-8'))
+            orgname = data.get('name')
+            orgtype = data.get('type')
+            orgboard = data.get('board')
+
+            user_id = request.META.get('HTTP_USER_ID')
+            userObj = User.objects.get(id=user_id)
+        
             orgObj = Organisation.objects.get(user=userObj)
 
             return JsonResponse({
@@ -37,20 +37,23 @@ def view(request):
                     'message': 'Name and type are required'
                 }, status=403)
             
-            orgObj = Organisation.objects.create(user=userObj, name=orgname, orgType=orgtype, board=orgboard)
+            orgObj = Organisation.objects.create(name=orgname, orgType=orgtype, board=orgboard)
             orgObj.save()
+
+            userObj.organisation = orgObj
+            userObj.save()
 
             return JsonResponse({
                 'status': 'success',
                 'message': 'Organisation created successfully',
-                'organisation': {
-                    'id': orgObj.id,
-                    'name': orgObj.name,
-                    'type': orgObj.orgType,
-                    'board': orgObj.board,
-                    'departments': None
-                }
+                'organisation_id': orgObj.id
             }, status=201)
+            
+        except Exception:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'something went wrong'
+            }, status=400)
 
     return JsonResponse({
         'status': 'error',

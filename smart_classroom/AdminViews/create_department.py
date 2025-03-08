@@ -37,10 +37,7 @@ def view(request):
             return JsonResponse({
                 'status': 'success',
                 'message': 'Department created successfully',
-                'department': {
-                    'id': department.id,
-                    'name': department.name
-                }
+                'department_id': department.id
             }, status=201)
 
         except Organisation.DoesNotExist:
@@ -48,6 +45,12 @@ def view(request):
                 'status': 'error',
                 'message': 'Organisation not found'
             }, status=404)
+        
+        except Exception:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Something went wrong'
+            }, status=400)
 
     return JsonResponse({
         'status': 'error',

@@ -1,9 +1,9 @@
 import json
 import hashlib
 from smart_classroom.models import * 
-from .BaseTestData import APITestData
+from .TestData import APITestData
 
-class AdminAPITestCase(APITestData):
+class AdminAPITests(APITestData):
 
     def test_01_admin_signup(self):
         """Test admin signup endpoint."""
@@ -108,3 +108,93 @@ class AdminAPITestCase(APITestData):
             'password': str(hashlib.sha256('securepass'.encode()).hexdigest())
         }, content_type='application/json')
         self.assertEqual(response.status_code, 405)
+
+    def test_10_create_another_admin(self):
+        """Test create another admin for same organisation as admmin"""
+        response = self.client.post('/api/admin/other_admin/create/', 
+        data = {
+            'first_name':'first_name', 
+            'last_name':'last_name', 
+            'phone':'+911122334455',
+            'email': 'newadmin@example.com',
+            'password': str(hashlib.sha256('securepass'.encode()).hexdigest())
+        }, content_type='application/json')
+        self.assertEqual(response.status_code, 201)
+        self.assertIn("admin added successfully", response.content.decode())
+    
+    def test_11_create_another_admin_with_incomplete_details(self):
+        """Test create another admin for same organisation as admmin with incomplete details"""
+        response = self.client.post('/api/admin/other_admin/create/', 
+        data = {
+            'first_name':'first_name', 
+            'last_name':'last_name',
+            'email': 'newadmin@example.com',
+            'password': str(hashlib.sha256('securepass'.encode()).hexdigest())
+        }, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+        self.assertIn("one or more fields missing", response.content.decode())
+    
+    def test_12_create_another_admin_with_invalid_request_method(self):
+        """Test create another admin for same organisation as admmin with incomplete details"""
+        response = self.client.get('/api/admin/other_admin/create/', 
+        data = {
+            'first_name':'first_name', 
+            'last_name':'last_name',
+            'email': 'newadmin@example.com',
+            'password': str(hashlib.sha256('securepass'.encode()).hexdigest())
+        }, content_type='application/json')
+        self.assertEqual(response.status_code, 405)
+        self.assertIn("Invalid request method", response.content.decode())
+    
+    def test_13_create_another_admin_using_existing_admin_details(self):
+        """Test create another admin for same organisation as admmin with incomplete details"""
+        response = self.client.post('/api/admin/other_admin/create/', 
+        data = {
+            'first_name':'first_name', 
+            'last_name':'last_name',
+            'phone':'+911122334455',
+            'email': 'testuser@gmail.com',
+            'password': str(hashlib.sha256('securepass'.encode()).hexdigest())
+        }, content_type='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertIn("Admin already exists", response.content.decode())
+
+    def test_14_create_another_admin_with_invalid_admin(self):
+        """Test create another admin for same organisation as admmin"""
+
+        response = self.client.post('/api/user/login/', 
+        data = {
+            'email': 'testuser3@gmail.com',
+            'password': 'password'
+        }, content_type='application/json')
+
+        self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"
+        if self.token:
+            self.client.defaults['HTTP_AUTHORIZATION'] = self.token
+            self.client.defaults['HTTP_USER_ID'] = str(self.user3.id)
+
+        response = self.client.post('/api/admin/other_admin/create/', 
+        data = {
+            'first_name':'first_name', 
+            'last_name':'last_name', 
+            'phone':'+911122334455',
+            'email': 'newadmin@example.com',
+            'password': str(hashlib.sha256('securepass'.encode()).hexdigest())
+        }, content_type='application/json')
+        self.assertEqual(response.status_code, 401)
+        self.assertIn("unauthorized access", response.content.decode())
+    
+    def test_15_create_another_admin_for_unhandled_exceptions(self):
+        """Test create another admin for same organisation as admmin"""
+
+        response = self.client.post('/api/admin/other_admin/create/', 
+        data = {
+            """'first_name':'first_name', 
+            'last_name':'last_name', 
+            'phone':'+911122334455',
+            'email': 'newadmin@example.com',
+            'password': str(hashlib.sha256('securepass'.encode()).hexdigest())"""
+        }, content_type='application/json')
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("Something went wrong", response.content.decode())
+    

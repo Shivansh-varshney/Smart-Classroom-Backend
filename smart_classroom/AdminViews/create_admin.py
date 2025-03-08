@@ -1,51 +1,51 @@
 import json
 from . import verify_admin
+from django.db import IntegrityError
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from smart_classroom.models import Degree, Course
+from smart_classroom.models import User, Organisation
 
-@csrf_exempt
 def view(request):
 
-    if request.method == 'POST':
+    if request.method == "POST":
         try:
-
             verify = verify_admin.view(request)
             if verify.status_code != 200:
                 return verify
-
+                
             data = json.loads(request.body.decode('utf-8'))
-            degree_id = data.get('degree_id')
-            name = data.get('name')
-            total_credits = data.get('credits')
+            first_name = data.get('first_name')
+            last_name = data.get('last_name')
+            phone = data.get('phone')
+            email = data.get('email')
+            role = 'admin'
 
-            if not degree_id or not name or not total_credits:
+            if not first_name or not last_name or not phone or not email:
                 return JsonResponse({
                     'status': 'error',
                     'message': 'one or more fields missing'
                 }, status=403)
 
             # queries
-            degreeObj = Degree.objects.get(id=degree_id)
-            course = Course.objects.create(
-                degree=degreeObj,
-                name=name,
-                total_credits=total_credits
+            adminObj = User.objects.get(id=request.META.get('HTTP_USER_ID'))
+            userObj = User.objects.create(
+                organisation=adminObj.organisation,
+                first_name=first_name,
+                last_name=last_name,
+                phone=phone,
+                email=email
             )
-
-            course.save()
-
+            
             return JsonResponse({
                 'status': 'success',
-                'message': 'Course created successfully',
-                'course_id': course.id
+                'message': 'admin added successfully'
             }, status=201)
 
-        except Degree.DoesNotExist:
+        except IntegrityError:
             return JsonResponse({
                 'status': 'error',
-                'message': 'Degree does not exist'
-            }, status=404)
+                'message': 'Admin already exists'
+            }, status=401)
         
         except Exception:
             return JsonResponse({

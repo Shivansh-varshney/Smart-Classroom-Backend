@@ -2,12 +2,12 @@ import json
 from . import verify_admin
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from smart_classroom.models import Degree, Course
+from smart_classroom.models import Degree
 
 @csrf_exempt
 def view(request):
+    if request.method == "POST":
 
-    if request.method == 'POST':
         try:
 
             verify = verify_admin.view(request)
@@ -16,10 +16,9 @@ def view(request):
 
             data = json.loads(request.body.decode('utf-8'))
             degree_id = data.get('degree_id')
-            name = data.get('name')
-            total_credits = data.get('credits')
+            new_details = data.get('new_details')
 
-            if not degree_id or not name or not total_credits:
+            if not degree_id or not new_details:
                 return JsonResponse({
                     'status': 'error',
                     'message': 'one or more fields missing'
@@ -27,26 +26,36 @@ def view(request):
 
             # queries
             degreeObj = Degree.objects.get(id=degree_id)
-            course = Course.objects.create(
-                degree=degreeObj,
-                name=name,
-                total_credits=total_credits
-            )
 
-            course.save()
+            for field, value in new_details.items():
+                if hasattr(degreeObj, field):
+                    if field.lower() == 'department':
+                        return JsonResponse({
+                            'status': 'error',
+                            'message': 'Department of a degree can not be changed'
+                        }, status=403)
+
+                    setattr(degreeObj, field, value)
+
+                else:
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': f'{field} is invalid field'
+                    }, status=400)
+
+            degreeObj.save()
 
             return JsonResponse({
                 'status': 'success',
-                'message': 'Course created successfully',
-                'course_id': course.id
-            }, status=201)
+                'message': 'Degree updated successfully'
+            }, status=200)
 
         except Degree.DoesNotExist:
             return JsonResponse({
-                'status': 'error',
-                'message': 'Degree does not exist'
+                'status':'error',
+                'message': 'Degree not found'
             }, status=404)
-        
+
         except Exception:
             return JsonResponse({
                 'status': 'error',
