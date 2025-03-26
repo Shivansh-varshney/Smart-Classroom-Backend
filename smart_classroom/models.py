@@ -111,11 +111,7 @@ class Result(models.Model):
 class UserAddress(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE)
-    addressname = models.CharField(
-        max_length=50, null=True, blank=True)
-    housenumber = models.CharField(
-        max_length=50, unique=True, null=True, blank=True)
-    landmark = models.CharField(
+    house_number = models.CharField(
         max_length=50, null=True, blank=True)
     street = models.CharField(
         max_length=250, null=True, blank=True)
@@ -128,7 +124,6 @@ class UserAddress(models.Model):
     country = models.CharField(
         max_length=250, null=True, blank=True)
     zipcode = models.IntegerField(null=True, blank=True)
-    status = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "User Adresses"

@@ -1,6 +1,5 @@
 import json
 import hashlib
-from smart_classroom.models import * 
 from .TestData import APITestData
 
 class AdminAPITests(APITestData):
@@ -195,6 +194,5 @@ class AdminAPITests(APITestData):
             'email': 'newadmin@example.com',
             'password': str(hashlib.sha256('securepass'.encode()).hexdigest())"""
         }, content_type='application/json')
-        self.assertEqual(response.status_code, 400)
-        self.assertIn("Something went wrong", response.content.decode())
-    
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Something went wrong", response.content.decode())    

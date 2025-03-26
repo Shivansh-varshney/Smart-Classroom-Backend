@@ -1,58 +1,52 @@
 import json
+import hashlib
 from . import verify_admin
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from smart_classroom.models import Organisation, Department
+from smart_classroom.models import User
 
 @csrf_exempt
 def view(request):
-        
+
     if request.method == 'POST':
 
         try:
-
             verify = verify_admin.view(request)
             if verify.status_code != 200:
                 return verify
 
             data = json.loads(request.body.decode('utf-8'))
-            organisation_id = data.get('organisation_id')
-            name = data.get('name')
+            user_id = data.get('user_id')
 
-            if not organisation_id or not name:
+            if not user_id:
                 return JsonResponse({
                     'status': 'error',
-                    'message': 'Organisation ID or name missing'
+                    'message': 'user_id is required'
                 }, status=403)
 
-            organisationObj = Organisation.objects.get(id=organisation_id)
+            # queries
+            userObj = User.objects.get(id = user_id)
 
-            department = Department.objects.create(
-                organisation=organisationObj,
-                name=name
-            )
-
-            department.save()
+            userObj.delete()
 
             return JsonResponse({
                 'status': 'success',
-                'message': 'Department created successfully',
-                'department_id': department.id
-            }, status=201)
-
-        except Organisation.DoesNotExist:
+                'message': 'User deleted successfully'
+            }, status=200)
+        
+        except User.DoesNotExist:
             return JsonResponse({
                 'status': 'error',
-                'message': 'Organisation not found'
+                'message': 'User not found'
             }, status=404)
         
         except Exception:
             return JsonResponse({
                 'status': 'error',
                 'message': 'Something went wrong'
-            }, status=500)
-
+            }, status=401)
+        
     return JsonResponse({
         'status': 'error',
-        'message': 'Invalid Request Method'
+        'message': 'Invalid request method'
     }, status=405)

@@ -51,7 +51,7 @@ def view(request):
             return JsonResponse({
                 'status': 'error',
                 'message': 'Something went wrong'
-            }, status=400)
+            }, status=500)
 
     return JsonResponse({
         'status': 'error',

@@ -1,7 +1,4 @@
 import json
-import hashlib
-from django.urls import reverse
-from smart_classroom.models import * 
 from .TestData import APITestData
 
 class CourseAPITests(APITestData):
@@ -84,7 +81,7 @@ class CourseAPITests(APITestData):
                 "credits": 4"""
             }, content_type="application/json")
 
-            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.status_code, 500)
             self.assertIn("Something went wrong", response.content.decode())
 
     def test_07_update_course_name(self):

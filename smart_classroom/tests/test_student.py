@@ -1,8 +1,6 @@
 import json
-import hashlib
 from PIL import Image
 from io import BytesIO
-from smart_classroom.models import * 
 from .TestData import APITestData
 from django.core.files.uploadedfile import SimpleUploadedFile
 
@@ -200,4 +198,75 @@ class StudentAPITests(APITestData):
 
         self.assertEqual(response.status_code, 401)
         self.assertIn("Student already exists", response.content.decode())
-        
+
+    def test_07_remove_student(self):
+
+        """Test remove student"""
+        response = self.client.post("/api/admin/user/remove/", {
+            "user_id": self.user4.id
+        }, content_type='application/json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("User deleted successfully", response.content.decode())
+    
+    def test_08_remove_student_with_incomplete_details(self):
+
+        """Test remove student with incomplete details"""
+        response = self.client.post("/api/admin/user/remove/", {
+        }, content_type='application/json')
+
+        self.assertEqual(response.status_code, 403)
+        self.assertIn("user_id is required", response.content.decode())
+    
+    def test_09_remove_non_existing_student(self):
+
+        """Test remove non existing student"""
+        response = self.client.post("/api/admin/user/remove/", {
+            "user_id": 99
+        }, content_type='application/json')
+
+        self.assertEqual(response.status_code, 404)
+        self.assertIn("User not found", response.content.decode())
+    
+    def test_10_remove_student_with_invalid_request_method(self):
+
+        """Test remove student with incomplete details"""
+        response = self.client.get("/api/admin/user/remove/", {
+            "user_id": self.user4.id
+        }, content_type='application/json')
+
+        self.assertEqual(response.status_code, 405)
+        self.assertIn("Invalid request method", response.content.decode())
+
+    def test_11_remove_student_with_invalid_admin(self):
+
+        """Test remove student with invalid admin"""
+
+        response = self.client.post('/api/user/login/', 
+        data = {
+            'email': 'testuser3@gmail.com',
+            'password': 'password'
+        }, content_type='application/json')
+
+        self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"
+        if self.token:
+            self.client.defaults['HTTP_AUTHORIZATION'] = self.token
+            self.client.defaults['HTTP_USER_ID'] = str(self.user3.id)
+
+        response = self.client.post("/api/admin/user/remove/", {
+            "user_id": self.user4.id
+        }, content_type='application/json')
+
+        self.assertEqual(response.status_code, 401)
+        self.assertIn("unauthorized access", response.content.decode())
+
+    def test_12_remove_student_unhandled_exceptions(self):
+
+        """Test remove student"""
+        response = self.client.post("/api/admin/user/remove/", {
+            """"user_id": self.user4.id"""
+        }, content_type='application/json')
+
+        self.assertEqual(response.status_code, 401)
+        self.assertIn("Something went wrong", response.content.decode())
+    

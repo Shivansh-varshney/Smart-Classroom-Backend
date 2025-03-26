@@ -52,8 +52,8 @@ def view(request):
         except Exception:
             return JsonResponse({
                 'status': 'error',
-                'message': 'something went wrong'
-            }, status=400)
+                'message': 'Something went wrong'
+            }, status=500)
 
     return JsonResponse({
         'status': 'error',

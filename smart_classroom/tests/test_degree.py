@@ -1,6 +1,4 @@
 import json
-import hashlib
-from smart_classroom.models import * 
 from .TestData import APITestData
 
 class DegreeAPITests(APITestData):
@@ -95,9 +93,8 @@ class DegreeAPITests(APITestData):
             "semesters": 8"""
         }, content_type="application/json")
         
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 500)
         self.assertIn("Something went wrong", response.content.decode())
-
     def test_07_update_degree_semesters(self):
         """Test update semesters of a degree"""
 
@@ -191,9 +188,8 @@ class DegreeAPITests(APITestData):
             }"""
         }, content_type="application/json")
         
-        self.assertEqual(response.status_code, 400)
-        self.assertIn("Something went wrong", response.content.decode())
-    
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Something went wrong", response.content.decode())    
     def test_14_update_degree_with_invalid_request_method(self):
         """Test update non existent degree"""
 

@@ -1,37 +1,9 @@
 import json
-import hashlib
-from smart_classroom.models import * 
-from django.test import TestCase, Client
+from django.test import Client
+from .TestData import APITestData
 from utils.helpers.auths import verify_token
 
-class HelperFunctionsTests(TestCase):
-
-    @classmethod
-    def setUpTestData(cls):
-
-        # user for admin role
-        cls.user = User.objects.create(
-        first_name='first_name', 
-        last_name='last_name', 
-        phone='phone', 
-        email='testuser@gmail.com', 
-        role='admin', 
-        password=hashlib.sha256('password'.encode()).hexdigest())
-
-    def setUp(self):
-
-        self.client = Client()
-        response = self.client.post('/api/user/login/', 
-        data = {
-            'email': 'testuser@gmail.com',
-            'password': 'password'
-        }, content_type='application/json')
-
-        self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"
-        self.refresh_token = f"{response.headers.get('REFRESH-TOKEN')}"
-        if self.token:
-            self.client.defaults['HTTP_AUTHORIZATION'] = self.token
-            self.client.defaults['HTTP_USER_ID'] = str(self.user.id)
+class HelperFunctionsTests(APITestData):
 
     def test_01_refresh_token(self):
 

@@ -1,8 +1,6 @@
 import json
-import hashlib
 from PIL import Image
 from io import BytesIO
-from smart_classroom.models import * 
 from .TestData import APITestData
 from django.core.files.uploadedfile import SimpleUploadedFile
 
@@ -268,5 +266,5 @@ class TeacherAPITests(APITestData):
             """'user_id': self.user3.id"""
         }, content_type='application/json')
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 500)
         self.assertIn("Something went wrong", response.content.decode())

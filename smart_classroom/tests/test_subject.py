@@ -1,6 +1,4 @@
 import json
-import hashlib
-from smart_classroom.models import * 
 from .TestData import APITestData
 
 class SubjectAPITests(APITestData):
@@ -123,9 +121,9 @@ class SubjectAPITests(APITestData):
                 "semester": 1"""   
         }, content_type='application/json')
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 500)
         self.assertIn("Something went wrong", response.content.decode())
-
+    
     def test_09_update_subject_name(self):
         """Test update subject name"""
 
@@ -225,9 +223,8 @@ class SubjectAPITests(APITestData):
             }"""
         }, content_type='application/json')
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 500)
         self.assertIn("Something went wrong", response.content.decode())
-
     def test_16_update_subject_course(self):
         """Test update subject name"""
 

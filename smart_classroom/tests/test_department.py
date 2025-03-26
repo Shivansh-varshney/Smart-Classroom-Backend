@@ -1,6 +1,4 @@
 import json
-import hashlib
-from smart_classroom.models import *
 from .TestData import APITestData
 
 class DepartmentAPITests(APITestData):
@@ -211,9 +209,8 @@ class DepartmentAPITests(APITestData):
             """'department_id': self.department.id"""
         }, content_type='application/json')
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 500)
         self.assertIn("Something went wrong", response.content.decode())
-
     def test_16_create_department_for_unhandled_exceptions(self):
         """Test create department"""
 
@@ -223,9 +220,8 @@ class DepartmentAPITests(APITestData):
             "name": "Mathematics"""
         }, content_type='application/json')
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 500)
         self.assertIn("Something went wrong", response.content.decode())
-
     def test_17_get_department_for_unhandled_exceptions(self):
         """Test get department when it exists"""
 
@@ -233,9 +229,8 @@ class DepartmentAPITests(APITestData):
             """"department_id": self.department.id"""
         }, content_type='application/json')
 
-        self.assertEqual(response.status_code, 400)
-        self.assertIn("Something went wrong", response.content.decode())
-    
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Something went wrong", response.content.decode())    
     def test_18_update_organisation_of_department_for_invalid_department(self):
         """Test update organisation of a department"""
 

@@ -1,8 +1,5 @@
 import json
-import hashlib
-from django.urls import reverse
 from .TestData import APITestData
-from smart_classroom.models import *
 
 class OrganisationAPITests(APITestData):
 
@@ -236,7 +233,7 @@ class OrganisationAPITests(APITestData):
         },
         content_type='application/json')
         
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 500)
         self.assertIn('Something went wrong', response.content.decode())
     
     def test_16_update_name_of_an_existing_organisation_with_invalid_admin(self):
@@ -275,7 +272,7 @@ class OrganisationAPITests(APITestData):
         },
         content_type='application/json')
         
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 500)
         self.assertIn('Something went wrong', response.content.decode())
 
     def test_18_create_first_organisation_for_an_admin_for_unhandled_exceptions(self):
@@ -300,7 +297,7 @@ class OrganisationAPITests(APITestData):
             'board': 'State Board',"""
         },
         content_type='application/json')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 500)
 
     def test_19_update_invalid_field_of_an_existing_organisation(self):
         """Test update invalid field of an existing organisation"""
