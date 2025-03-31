@@ -35,7 +35,6 @@ def view(request):
                     last_name=last_name,
                     phone=phone,
                     email=email,
-                    role=role,
                     password=hashlib.sha256(password.encode()).hexdigest()
                 )
                 userObj.save()
