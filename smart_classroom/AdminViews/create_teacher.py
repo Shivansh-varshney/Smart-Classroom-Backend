@@ -3,10 +3,9 @@ import hashlib
 from . import verify_admin
 from django.db import IntegrityError
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from smart_classroom.models import User, Organisation, Department, Teacher
 
-@csrf_exempt
+
 def view(request):
 
     if request.method == 'POST':

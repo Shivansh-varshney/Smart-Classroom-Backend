@@ -1,10 +1,9 @@
 from . import verify_admin
 from django.http import JsonResponse
 from django.db.models import Count, Q
-from django.views.decorators.csrf import csrf_exempt
 from smart_classroom.models import User, Organisation, Department
 
-@csrf_exempt
+
 def view(request):
 
     if request.method == 'POST':

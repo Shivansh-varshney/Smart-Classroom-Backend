@@ -1,9 +1,8 @@
 from django.http import JsonResponse
 from smart_classroom.models import User
-from django.views.decorators.csrf import csrf_exempt
 from smart_classroom.BaseUserViews import verify_session
 
-@csrf_exempt
+
 def view(request):
 
     verify = verify_session.view(request)

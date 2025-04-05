@@ -1,6 +1,15 @@
 from django.db import models
+from datetime import timedelta
+from django.utils import timezone
+from shortuuid.django_fields import ShortUUIDField
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import AbstractUser
+
+requestStatus = {
+    'Pending': 'Pending',
+    'In process': 'In process',
+    'Resolved': 'Resolved'
+}
 
 class Organisation(models.Model):
 
@@ -127,3 +136,25 @@ class UserAddress(models.Model):
 
     class Meta:
         verbose_name_plural = "User Adresses"
+
+class ContactRequest(models.Model):
+
+    requestID = ShortUUIDField(unique=True, length=14, max_length=15, alphabet="ABCDEFGHIGKLMNOPQRSTUVWXYZ1234567890")
+    status = models.CharField(choices=requestStatus, default='Pending', max_length=12)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    email = models.CharField(max_length=256, null=False, blank=False)
+    phone = models.CharField(max_length=15, null=False, blank=False)
+    topic = models.CharField(max_length=50, null=False, blank=False)
+    description = models.TextField(null=False, blank=False)
+
+    def __str__(self):
+        return f"Request ID: {self.requestID}"
+
+class EmailOTP(models.Model):
+
+    email = models.EmailField()
+    otp = models.CharField(max_length=256)
+    createdAt = models.DateTimeField(auto_now_add=True)
+
+    def is_expired(self):
+        return self.createdAt < timezone.now() - timedelta(minutes=10)

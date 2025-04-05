@@ -1,10 +1,9 @@
 import json
 import hashlib
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from smart_classroom.models import User
 
-@csrf_exempt
+
 def view(request):
         if request.method == 'POST':
             data = json.loads(request.body.decode('utf-8'))

@@ -1,8 +1,7 @@
 from django.http import JsonResponse
 from utils.helpers.auths import verify_token
-from django.views.decorators.csrf import csrf_exempt
 
-@csrf_exempt
+
 def view(request):
 
     auth_header = request.META.get('HTTP_AUTHORIZATION')

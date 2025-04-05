@@ -1,11 +1,10 @@
 import json
+import random
 import hashlib
 from django.http import JsonResponse
-from smart_classroom.models import User
-from utils.helpers.auths import generate_token
-from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
+from smart_classroom.models import User, EmailOTP
 
-@csrf_exempt
 def view(request):
 
     if request.method == 'POST':
@@ -28,25 +27,21 @@ def view(request):
 
             if user_email == email and user_password == hashlib.sha256(password.encode()).hexdigest():
 
-                tokens = generate_token(userObj)
+                subject = "OTP for classflow login."
+                otp = str(random.randint(1000000, 9999999))
+                message = f"Use {otp} as the one-time password to login the classlow dashboard."
+                from_email = None
+                recipient_list = [userObj.email]
+                send_mail(subject, message, from_email, recipient_list)
+                EmailOTP.objects.create(
+                    email=userObj.email,
+                    otp=hashlib.sha256(otp.encode()).hexdigest()
+                )
 
-                response = JsonResponse({
+                return JsonResponse({
                     'status': 'success',
-                    'message': 'login successful',
-                    'user': {
-                        'id': userObj.id,
-                        'first_name': userObj.first_name,
-                        'last_name': userObj.last_name,
-                        'email': userObj.email,
-                        'phone': userObj.phone
-                    }
-                }, status=200)
-
-                response['USER-ID'] = userObj.id
-                response['ACCESS-TOKEN'] = tokens['access_token']
-                response['REFRESH-TOKEN'] = tokens['refresh_token']
-
-                return response
+                    'message': 'OTP sent successfully'
+                }, status = 200)
             
             return JsonResponse({
                 'status': 'error',

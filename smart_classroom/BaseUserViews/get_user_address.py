@@ -1,9 +1,8 @@
 import json
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from smart_classroom.models import User, UserAddress
 
-@csrf_exempt
+
 def view(request):
 
     if request.method == 'POST':

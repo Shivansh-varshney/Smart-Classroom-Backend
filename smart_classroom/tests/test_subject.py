@@ -225,6 +225,7 @@ class SubjectAPITests(APITestData):
 
         self.assertEqual(response.status_code, 500)
         self.assertIn("Something went wrong", response.content.decode())
+
     def test_16_update_subject_course(self):
         """Test update subject name"""
 
