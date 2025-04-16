@@ -51,12 +51,6 @@ def view(request):
                 'status': 'error',
                 'message': 'OTP not verified'
             }, status=403)
-
-        except Exception as error:
-            return JsonResponse({
-                'status': 'error',
-                'message': f'Error: {error}'
-            }, status=500)
         
     return JsonResponse({
             'status': 'error',

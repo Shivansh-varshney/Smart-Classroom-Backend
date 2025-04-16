@@ -9,6 +9,7 @@ from django.test import override_settings, TestCase, Client
 TEST_MEDIA_ROOT = os.path.join(settings.BASE_DIR, "test_media")
 
 class ModelTestData(TestCase):
+
     @classmethod
     def setUpTestData(cls):
         cls.organisation = Organisation.objects.create(name='First Organisation',orgType='Private School')
@@ -43,11 +44,13 @@ class APITestData(ModelTestData):
 
     def setUp(self):
 
+        self.otp = EmailOTP.objects.create(email='testuser@gmail.com', otp=hashlib.sha256('000111'.encode()).hexdigest())
+
         self.client = Client()
-        response = self.client.post('/api/user/login/', 
+        response = self.client.post('/api/user/verify-otp/', 
         data = {
             'email': 'testuser@gmail.com',
-            'password': 'password'
+            'otp': '000111'
         }, content_type='application/json')
 
         self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"

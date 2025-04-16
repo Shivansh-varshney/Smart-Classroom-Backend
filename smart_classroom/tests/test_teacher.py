@@ -1,7 +1,9 @@
 import json
+import hashlib
 from PIL import Image
 from io import BytesIO
 from .TestData import APITestData
+from smart_classroom.models import EmailOTP
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 
@@ -92,10 +94,12 @@ class TeacherAPITests(APITestData):
     def test_05_create_teacher_with_invalid_admin(self):
         """Test create a teacher with invalid admin"""
 
-        response = self.client.post('/api/user/login/', 
+        self.otp = EmailOTP.objects.create(email='testuser3@gmail.com', otp=hashlib.sha256('000111'.encode()).hexdigest())
+
+        response = self.client.post('/api/user/verify-otp/', 
         data = {
             'email': 'testuser3@gmail.com',
-            'password': 'password'
+            'otp': '000111'
         }, content_type='application/json')
 
         self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"
@@ -199,10 +203,12 @@ class TeacherAPITests(APITestData):
     def test_11_update_teacher_invalid_admin(self):
         """Test update teacher with invalid admin"""
 
-        response = self.client.post('/api/user/login/', 
+        self.otp = EmailOTP.objects.create(email='testuser3@gmail.com', otp=hashlib.sha256('000111'.encode()).hexdigest())
+
+        response = self.client.post('/api/user/verify-otp/', 
         data = {
             'email': 'testuser3@gmail.com',
-            'password': 'password'
+            'otp': '000111'
         }, content_type='application/json')
 
         self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"

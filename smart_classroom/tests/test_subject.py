@@ -1,5 +1,7 @@
 import json
+import hashlib
 from .TestData import APITestData
+from smart_classroom.models import EmailOTP
 
 class SubjectAPITests(APITestData):
 
@@ -88,10 +90,12 @@ class SubjectAPITests(APITestData):
     def test_07_create_subject_with_invalid_admin(self):
         """Test create subject"""
 
-        response = self.client.post('/api/user/login/', 
+        self.otp = EmailOTP.objects.create(email='testuser3@gmail.com', otp=hashlib.sha256('000111'.encode()).hexdigest())
+
+        response = self.client.post('/api/user/verify-otp/', 
         data = {
             'email': 'testuser3@gmail.com',
-            'password': 'password'
+            'otp': '000111'
         }, content_type='application/json')
 
         self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"
@@ -179,10 +183,12 @@ class SubjectAPITests(APITestData):
     def test_13_update_subject_with_invalid_admin(self):
         """Test update subject invalid admin"""
 
-        response = self.client.post('/api/user/login/', 
+        self.otp = EmailOTP.objects.create(email='testuser3@gmail.com', otp=hashlib.sha256('000111'.encode()).hexdigest())
+
+        response = self.client.post('/api/user/verify-otp/', 
         data = {
             'email': 'testuser3@gmail.com',
-            'password': 'password'
+            'otp': '000111'
         }, content_type='application/json')
 
         self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"

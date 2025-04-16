@@ -1,5 +1,7 @@
 import json
+import hashlib
 from .TestData import APITestData
+from smart_classroom.models import EmailOTP
 
 class OrganisationAPITests(APITestData):
 
@@ -7,10 +9,12 @@ class OrganisationAPITests(APITestData):
         """Test creating a new organisation for a user with incomplete details"""
 
         # user2 doesn't has an organisation
-        response = self.client.post('/api/user/login/', 
+        self.otp = EmailOTP.objects.create(email='testuser2@gmail.com', otp=hashlib.sha256('000111'.encode()).hexdigest())
+
+        response = self.client.post('/api/user/verify-otp/', 
         data = {
             'email': 'testuser2@gmail.com',
-            'password': 'password'
+            'otp': '000111'
         }, content_type='application/json')
 
         self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"
@@ -30,11 +34,19 @@ class OrganisationAPITests(APITestData):
         """Test creating a new organisation for a user when they have no organisation"""
 
         # user2 doesn't has an organisation
-        response = self.client.post('/api/user/login/', 
+        self.otp = EmailOTP.objects.create(email='testuser2@gmail.com', otp=hashlib.sha256('000111'.encode()).hexdigest())
+
+        response = self.client.post('/api/user/verify-otp/', 
         data = {
             'email': 'testuser2@gmail.com',
-            'password': 'password'
+            'otp': '000111'
         }, content_type='application/json')
+
+        self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"
+        if self.token:
+            self.client.defaults['HTTP_AUTHORIZATION'] = self.token
+            self.client.defaults['HTTP_USER_ID'] = str(self.user2.id)
+
 
         self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"
         if self.token:
@@ -91,10 +103,12 @@ class OrganisationAPITests(APITestData):
         """Test fetching organisation details."""
 
         # user2 doesn't has an organisation
-        response = self.client.post('/api/user/login/', 
+        self.otp = EmailOTP.objects.create(email='testuser2@gmail.com', otp=hashlib.sha256('000111'.encode()).hexdigest())
+
+        response = self.client.post('/api/user/verify-otp/', 
         data = {
             'email': 'testuser2@gmail.com',
-            'password': 'password'
+            'otp': '000111'
         }, content_type='application/json')
 
         self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"
@@ -121,10 +135,12 @@ class OrganisationAPITests(APITestData):
     def test_08_create_first_organisation_for_an_invalid_admin(self):
         """Test creating a new organisation for a user when they have no organisation"""
 
-        response = self.client.post('/api/user/login/', 
+        self.otp = EmailOTP.objects.create(email='testuser3@gmail.com', otp=hashlib.sha256('000111'.encode()).hexdigest())
+
+        response = self.client.post('/api/user/verify-otp/', 
         data = {
             'email': 'testuser3@gmail.com',
-            'password': 'password'
+            'otp': '000111'
         }, content_type='application/json')
 
         self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"
@@ -146,10 +162,12 @@ class OrganisationAPITests(APITestData):
     def test_09_get_organisation_with_invalid_admin(self):
         """Test fetching organisation with invalid admin"""
 
-        response = self.client.post('/api/user/login/', 
+        self.otp = EmailOTP.objects.create(email='testuser3@gmail.com', otp=hashlib.sha256('000111'.encode()).hexdigest())
+
+        response = self.client.post('/api/user/verify-otp/', 
         data = {
             'email': 'testuser3@gmail.com',
-            'password': 'password'
+            'otp': '000111'
         }, content_type='application/json')
 
         self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"
@@ -239,10 +257,12 @@ class OrganisationAPITests(APITestData):
     def test_16_update_name_of_an_existing_organisation_with_invalid_admin(self):
         """Test update name of an existing organisation with invalid admin"""
 
-        response = self.client.post('/api/user/login/', 
+        self.otp = EmailOTP.objects.create(email='testuser3@gmail.com', otp=hashlib.sha256('000111'.encode()).hexdigest())
+
+        response = self.client.post('/api/user/verify-otp/', 
         data = {
             'email': 'testuser3@gmail.com',
-            'password': 'password'
+            'otp': '000111'
         }, content_type='application/json')
 
         self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"
@@ -279,10 +299,12 @@ class OrganisationAPITests(APITestData):
         """Test creating a new organisation for an admin for unhandled exceptions"""
 
         # user2 doesn't has an organisation
-        response = self.client.post('/api/user/login/', 
+        self.otp = EmailOTP.objects.create(email='testuser2@gmail.com', otp=hashlib.sha256('000111'.encode()).hexdigest())
+
+        response = self.client.post('/api/user/verify-otp/', 
         data = {
             'email': 'testuser2@gmail.com',
-            'password': 'password'
+            'otp': '000111'
         }, content_type='application/json')
 
         self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"

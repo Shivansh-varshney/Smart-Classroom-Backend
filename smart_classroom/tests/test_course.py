@@ -1,5 +1,7 @@
 import json
+import hashlib
 from .TestData import APITestData
+from smart_classroom.models import EmailOTP
 
 class CourseAPITests(APITestData):
 
@@ -51,11 +53,12 @@ class CourseAPITests(APITestData):
 
     def test_05_create_course_with_invalid_admin(self):
         """Test create a course with invalid admin"""
+        self.otp = EmailOTP.objects.create(email='testuser3@gmail.com', otp=hashlib.sha256('000111'.encode()).hexdigest())
 
-        response = self.client.post('/api/user/login/', 
+        response = self.client.post('/api/user/verify-otp/', 
         data = {
             'email': 'testuser3@gmail.com',
-            'password': 'password'
+            'otp': '000111'
         }, content_type='application/json')
 
         self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"
@@ -66,7 +69,7 @@ class CourseAPITests(APITestData):
         response = self.client.post("/api/admin/course/create/",{
             "degree_id": self.degree.id,
             "name": "Discipline Specific Core",
-            "credits": 4
+              "credits": 4
         }, content_type="application/json")
 
         self.assertEqual(response.status_code, 401)
@@ -148,11 +151,12 @@ class CourseAPITests(APITestData):
     
     def test_12_update_course_with_invalid_admin(self):
         """Test update course invalid request method"""
+        self.otp = EmailOTP.objects.create(email='testuser3@gmail.com', otp=hashlib.sha256('000111'.encode()).hexdigest())
 
-        response = self.client.post('/api/user/login/', 
+        response = self.client.post('/api/user/verify-otp/', 
         data = {
             'email': 'testuser3@gmail.com',
-            'password': 'password'
+            'otp': '000111'
         }, content_type='application/json')
 
         self.token = f"Bearer {response.headers.get('ACCESS-TOKEN')}"
